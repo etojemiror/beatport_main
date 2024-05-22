@@ -2,6 +2,7 @@
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 import ConfirmModal from "@/components/confirmModal.vue";
+import $ from "jquery";
 
 const router = useRouter()
 const password = ref('123456789')
@@ -11,11 +12,13 @@ const showModal = ref(false)
 
 function checkPassword() {
   if (password_input.value === password.value) {
-    router.push({name: 'home'})
+    router.replace({name: 'home'}) // push me
   } else {
     showModal.value = true
   }
 }
+
+$('body').attr('data-bs-theme', 'dark')
 
 function showWarning() {
   alert('Тебе точно ебало набьют')
