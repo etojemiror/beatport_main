@@ -15,6 +15,7 @@ function checkPassword() {
     router.replace({name: 'home'}) // push me
   } else {
     showModal.value = true
+    //new Audio('/src/assets/audio.wav').play()
   }
 }
 

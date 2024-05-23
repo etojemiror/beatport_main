@@ -9,7 +9,7 @@ const data_to_export = ref({
   catalogNumber: -1,
   coverArtFilename: '',
   releaseTitle: '',
-  releaseSalesType: '',
+  releaseSalesType: 'release',
   tracks: []
 })
 
@@ -25,12 +25,13 @@ function addTrack() {
     trackArtists: [
       {artistName: ''}
     ],
+    trackRemixers: [],
     audioFilename: '',
     country: '',
     trackGenre: '',
     trackCopyright: '',
     songwriters: [
-      {name: '', type: ''}
+      {name: '', type: 'author'}
     ]
   })
   updateIndexes()
@@ -42,12 +43,12 @@ function updateIndexes() {
   for (let i = 0; i < data_to_export.value.tracks.length; i++) {
     data_to_export.value.tracks[i].trackNumber = i + 1
     data_to_export.value.tracks[i].audioFilename =
-        `${data_to_export.value.UPC_EAN}_${data_to_export.value.tracks[i].trackNumber}.wav`
+        `${data_to_export.value.UPC_EAN}_${data_to_export.value.tracks[i].trackNumber}.flac`
   }
 }
 
 function exportXML() {
-  if (form.value.checkValidity()){
+  if (form.value.checkValidity()) {
     $.ajax({
       type: 'POST',
       url: 'http://localhost:8000/export/',
@@ -77,7 +78,13 @@ function setUPC() {
   data_to_export.value.coverArtFilename = data_to_export.value.UPC_EAN + '.png'
   for (let i = 0; i < data_to_export.value.tracks.length; i++) {
     data_to_export.value.tracks[i].audioFilename =
-        `${data_to_export.value.UPC_EAN}_${data_to_export.value.tracks[i].trackNumber}.wav`
+        `${data_to_export.value.UPC_EAN}_${data_to_export.value.tracks[i].trackNumber}.flac`
+  }
+}
+
+function setRemixers() {
+  if (data_to_export.value.tracks.length === 1) {
+    data_to_export.value.releaseTitle += ` (${data_to_export.value.tracks[0].trackRemixers[0]} Remix)`
   }
 }
 
@@ -89,7 +96,7 @@ onMounted(() => {
 
 <template>
   <a class="btn btn-lg ms-4 position-fixed end-0 rounded-pill m-4 bottom-0 btn-primary"
-          @click="addTrack">Add Track
+     @click="addTrack">Add Track
   </a>
   <main class="container p-4">
     <form ref="form" class="d-flex flex-column gap-4" @submit.prevent>
@@ -98,44 +105,62 @@ onMounted(() => {
       </div>
 
       <section class="d-flex flex-column gap-2">
-        <div class="hstack gap-2 w-100">
-          <div class="form-floating">
-            <input maxlength="24" class="form-control" id="aggregatorName" type="text"
-                   placeholder="" required
-                   v-model="data_to_export.aggregatorName"/>
-            <label for="aggregatorName">Aggregator Name</label>
+        <div class="row g-2">
+          <div class="col-3">
+            <div class="input-group">
+              <label class="input-group-text" for="aggregatorName">Aggregator Name</label>
+              <input maxlength="24" class="form-control" id="aggregatorName" type="text"
+                     placeholder="" required
+                     v-model="data_to_export.aggregatorName"/>
+
+            </div>
           </div>
-          <div class="form-floating w-100">
-            <input class="form-control" placeholder="" required
-                   name="labelName" id="labelName" type="text" v-model="data_to_export.labelName"/>
-            <label for="labelName">Label Name</label>
+          <div class="col-7">
+            <div class="input-group">
+              <label class="input-group-text" for="labelName">Label Name</label>
+              <input class="form-control" placeholder="" required
+                     name="labelName" id="labelName" type="text" v-model="data_to_export.labelName"/>
+
+            </div>
           </div>
-          <div class="form-floating">
-            <input @change="setUPC" placeholder="" required
-                   class="form-control" id="UPC_EAN" type="number" v-model="data_to_export.UPC_EAN"/>
-            <label for="UPC_EAN">UPC/EAN</label>
+          <div class="col">
+            <div class="input-group">
+              <label class="input-group-text" for="UPC_EAN">UPC/EAN</label>
+              <input @change="setUPC" placeholder="" required
+                     class="form-control" id="UPC_EAN" type="number" v-model="data_to_export.UPC_EAN"/>
+
+            </div>
           </div>
+
         </div>
-        <div class="hstack gap-2 w-100">
-          <div class="form-floating">
-            <input placeholder="" class="form-control" required
-                   id="catalogNumber" type="number" v-model="data_to_export.catalogNumber"/>
-            <label for="catalogNumber">Catalog Number</label>
+        <div class="row g-2">
+          <div class="col">
+            <div class="input-group">
+              <label class="input-group-text" for="catalogNumber">Catalog Number</label>
+              <input placeholder="" class="form-control" required
+                     id="catalogNumber" type="number" v-model="data_to_export.catalogNumber"/>
+            </div>
           </div>
-          <div class="form-floating">
-            <input class="form-control" placeholder="" required
-                   id="coverArtFilename" type="text" v-model="data_to_export.coverArtFilename"/>
-            <label for="coverArtFilename">Cover Art Filename</label>
+          <div class="col">
+            <div class="input-group">
+              <label class="input-group-text" for="coverArtFilename">Cover Art Filename</label>
+              <input class="form-control" placeholder="" required
+                     id="coverArtFilename" type="text" v-model="data_to_export.coverArtFilename"/>
+            </div>
           </div>
-          <div class="form-floating w-75">
-            <input class="form-control" placeholder="" required
-                   id="releaseTitle" type="text" v-model="data_to_export.releaseTitle"/>
-            <label for="releaseTitle">Release Title</label>
+          <div class="col-3">
+            <div class="input-group">
+              <label class="input-group-text" for="releaseTitle">Release Title</label>
+              <input class="form-control" placeholder="" required
+                     id="releaseTitle" type="text" v-model="data_to_export.releaseTitle"/>
+            </div>
           </div>
-          <div class="form-floating">
-            <input class="form-control" placeholder="" required
-                   id="releaseSalesType" type="text" v-model="data_to_export.releaseSalesType"/>
-            <label for="releaseSalesType">Release Sales Type</label>
+          <div class="col-3">
+            <div class="input-group">
+              <label class="input-group-text" for="releaseSalesType">Release Sales Type</label>
+              <input class="form-control" placeholder="" required
+                     id="releaseSalesType" type="text" v-model="data_to_export.releaseSalesType"/>
+            </div>
           </div>
         </div>
       </section>
@@ -152,93 +177,132 @@ onMounted(() => {
           <div class="card-header hstack">
             <span class="fs-5">#{{ track.trackNumber }} - {{ track.trackTitle }}</span>
             <a class="btn ms-auto btn-close"
-                    @click="data_to_export.tracks.splice(index, 1)"></a>
+               @click="data_to_export.tracks.splice(index, 1)"></a>
           </div>
           <div class="card-body d-flex flex-column gap-2">
-            <div class="hstack gap-2">
-              <div class="form-floating">
-                <input class="form-control" required
-                       placeholder="" id="trackNumber" type="number" v-model="track.trackNumber"/>
-                <label for="trackNumber">Track Number</label>
+            <div class="row g-2">
+              <div class="col-2">
+                <div class="input-group">
+                  <label class="input-group-text" for="trackNumber">Track Number</label>
+                  <input class="form-control" required
+                          placeholder="" id="trackNumber" type="number" v-model="track.trackNumber"/>
+                </div>
               </div>
-              <div class="form-floating w-100">
-                <input class="form-control" required
-                       placeholder="" id="trackTitle" type="text" v-model="track.trackTitle"/>
-                <label for="trackTitle">Track Title</label>
-              </div>
-            </div>
-            <div class="hstack gap-2">
-              <div class="form-floating w-75">
-                <input class="form-control" required
-                       placeholder="" id="trackPublisher" type="text" v-model="track.trackPublisher"/>
-                <label for="trackPublisher">Track Publisher</label>
-              </div>
-              <div class="form-floating w-25">
-                <input class="form-control" required
-                       placeholder="" id="trackMixVersion" type="text" v-model="track.trackMixVersion"/>
-                <label for="trackMixVersion">Track Mix Version</label>
-              </div>
-              <div class="form-floating w-25">
-                <input class="form-control" required
-                       placeholder="" id="originalReleaseDate" type="text" v-model="track.originalReleaseDate"/>
-                <label for="originalReleaseDate">Original Release Date</label>
-              </div>
-              <div class="form-floating w-25">
-                <input min="0" max="1" class="form-control" required
-                       placeholder="" id="exclusivePeriod" type="number"
-                       v-model="track.exclusivePeriod"/>
-                <label for="exclusivePeriod">Exclusive Period</label>
+              <div class="col">
+                <div class="input-group">
+                  <label class="input-group-text" for="trackTitle">Track Title</label>
+                  <input class="form-control" required
+                          placeholder="" id="trackTitle" type="text" v-model="track.trackTitle"/>
+                </div>
               </div>
             </div>
-            <div class="hstack gap-2">
-              <div class="form-floating w-50">
-                <input class="form-control" required
-                       placeholder="" id="audioFile" type="text" v-model="track.audioFilename"/>
-                <label for="audioFile">Audio Filename</label>
+            <div class="row g-2">
+              <div class="col-4">
+                <div class="input-group">
+                  <label class="input-group-text" for="trackPublisher">Track Publisher</label>
+                  <input class="form-control" required
+                          placeholder="" id="trackPublisher" type="text" v-model="track.trackPublisher"/>
+                </div>
               </div>
-              <div class="form-floating">
-                <input class="form-control" required
-                       placeholder="" id="country" type="text" v-model="track.country"/>
-                <label for="country">Country</label>
+              <div class="col">
+                <div class="input-group">
+                  <label class="input-group-text" for="trackMixVersion">Track Mix Version</label>
+                  <input class="form-control" required
+                          placeholder="" id="trackMixVersion" type="text" v-model="track.trackMixVersion"/>
+                </div>
               </div>
-              <div class="form-floating">
-                <input class="form-control" required
-                       placeholder="" id="trackGenre" type="text" v-model="track.trackGenre"/>
-                <label for="trackGenre">Track Genre</label>
+              <div class="col-3">
+                <div class="input-group">
+                  <label class="input-group-text" for="originalReleaseDate">Original Release Date</label>
+                  <input class="form-control" required
+                          placeholder="" id="originalReleaseDate" type="text" v-model="track.originalReleaseDate"/>
+                </div>
               </div>
-              <div class="form-floating w-50">
-                <input class="form-control" required
-                       placeholder="" id="trackCopyright" type="text" v-model="track.trackCopyright"/>
-                <label for="trackCopyright">Track Copyright</label>
+              <div class="col-2">
+                <div class="input-group">
+                  <label class="input-group-text" for="exclusivePeriod">Exclusive Period</label>
+                  <input min="0" max="1" class="form-control" required
+                         placeholder="" id="exclusivePeriod" type="number"
+                          v-model="track.exclusivePeriod"/>
+                </div>
+              </div>
+            </div>
+            <div class="row g-2">
+              <div class="col-3">
+                <div class="input-group">
+                  <label class="input-group-text" for="audioFile">Audio Filename</label>
+                  <input class="form-control" required
+                          placeholder="" id="audioFile" type="text" v-model="track.audioFilename"/>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="input-group">
+                  <label class="input-group-text" for="country">Country</label>
+                  <input class="form-control" required
+                          placeholder="" id="country" type="text" v-model="track.country"/>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="input-group">
+                  <label class="input-group-text" for="trackGenre">Track Genre</label>
+                  <input class="form-control" required
+                          placeholder="" id="trackGenre" type="text" v-model="track.trackGenre"/>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="input-group">
+                  <label class="input-group-text" for="trackCopyright">Track Copyright</label>
+                  <input class="form-control" required
+                         placeholder="" id="trackCopyright" type="text" v-model="track.trackCopyright"/>
+                </div>
               </div>
             </div>
             <h5>Artists</h5>
             <section class="d-flex flex-column gap-2">
               <div v-for="(artist, index) in track.trackArtists" :key="index">
                 <div class="hstack gap-2">
-                  <div class="form-floating w-100">
+                  <div class="input-group w-100">
+                    <label class="input-group-text" for="artistName">Artist Name</label>
                     <input class="form-control" required
                            placeholder="" id="artistName" type="text" v-model="artist.artistName"/>
-                    <label for="artistName">Artist Name</label>
                   </div>
                   <a @click="track.trackArtists.splice(index, 1)" class="btn btn-close"></a>
                 </div>
               </div>
               <a @click="track.trackArtists.push({artistName: ''})" class="btn btn-outline-primary">Add</a>
             </section>
+            <hr>
+            <h5>Remixers</h5>
+            <section class="d-flex flex-column gap-2">
+              <div v-for="(remixer, index) in track.trackRemixers" :key="index">
+                <div class="hstack gap-2">
+                  <div class="input-group w-100">
+                    <label class="input-group-text" for="remixerName">Remixer Name</label>
+                    <input class="form-control" required @change="setRemixers"
+                           placeholder="" id="remixerName" type="text" v-model="remixer.remixerName"/>
+                  </div>
+                  <a @click="track.trackRemixers.splice(index, 1)" class="btn btn-close"></a>
+                </div>
+              </div>
+              <a @click="track.trackRemixers.push({remixerName: ''})" class="btn btn-outline-primary">Add</a>
+            </section>
+            <hr>
             <h5>Songwriters</h5>
             <section class="d-flex flex-column gap-2">
               <div v-for="(writer, index) in track.songwriters" :key="index">
                 <div class="hstack gap-2">
-                  <div class="form-floating w-100">
+                  <div class="input-group w-100">
+                    <label class="input-group-text" for="writerName">Name</label>
                     <input class="form-control" required
                            placeholder="" id="writerName" type="text" v-model="writer.name"/>
-                    <label for="writerName">Name</label>
                   </div>
-                  <div class="form-floating w-25">
-                    <input class="form-control" required
-                           placeholder="" id="writerType" type="text" v-model="writer.type"/>
-                    <label for="writerType">Type</label>
+                  <div class="input-group w-25">
+                    <label class="input-group-text" for="writerType">Type</label>
+                    <select class="form-select" v-model="writer.type">
+                      <option value="author">Author</option>
+                      <option value="composer">Composer</option>
+                      <option value="lyricist">Lyricist</option>
+                    </select>
                   </div>
                   <a @click="track.songwriters.splice(index, 1)" class="btn btn-close"></a>
                 </div>
@@ -251,7 +315,7 @@ onMounted(() => {
       </div>
       <div v-if="form" class="hstack gap-4">
         <img style="filter: invert(1)" src="../assets/icons/upload.svg"/>
-        <a :class="{'disabled': !form.checkValidity()}" @click="exportXML" class="btn w-100 btn-lg btn-danger text-uppercase">Export</a>
+        <a @click="exportXML" class="btn w-100 btn-lg btn-danger text-uppercase">Export</a>
         <img style="filter: invert(1)" src="../assets/icons/upload.svg"/>
       </div>
     </form>
