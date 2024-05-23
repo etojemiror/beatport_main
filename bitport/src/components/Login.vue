@@ -14,7 +14,7 @@ function checkPassword() {
     router.push({name: 'home'})
   } else {
     showModal.value = true
-    //new Audio('/src/assets/audio.wav').play()
+    new Audio('/src/assets/audio.wav').play()
   }
 }
 
