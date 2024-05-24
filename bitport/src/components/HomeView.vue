@@ -84,7 +84,7 @@ function setUPC() {
 
 function setRemixers() {
   if (data_to_export.value.tracks.length === 1) {
-    data_to_export.value.releaseTitle += ` (${data_to_export.value.tracks[0].trackRemixers[0]} Remix)`
+    data_to_export.value.releaseTitle += ` (${data_to_export.value.tracks[0].trackRemixers[0].remixerName} Remix)`
   }
 }
 
