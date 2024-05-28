@@ -85,7 +85,7 @@ function setUPC() {
 
 function setRemixers() {
   if (data_to_export.value.tracks.length === 1) {
-    data_to_export.value.releaseTitle += ` (${data_to_export.value.tracks[0].trackMixVersion})`
+    data_to_export.value.releaseTitle = ` (${data_to_export.value.tracks[0].trackMixVersion})`
   }
 }
 
@@ -217,7 +217,7 @@ onMounted(() => {
               <div class="col">
                 <div class="input-group">
                   <label class="input-group-text" for="trackMixVersion">Track Mix Version</label>
-                  <input class="form-control" required
+                  <input class="form-control" required @change="setRemixers"
                           placeholder="" id="trackMixVersion" type="text" v-model="track.trackMixVersion"/>
                 </div>
               </div>
@@ -288,7 +288,7 @@ onMounted(() => {
                 <div class="hstack gap-2">
                   <div class="input-group w-100">
                     <label class="input-group-text" for="remixerName">Remixer Name</label>
-                    <input class="form-control" required @change="setRemixers"
+                    <input class="form-control" required
                            placeholder="" id="remixerName" type="text" v-model="remixer.remixerName"/>
                   </div>
                   <a @click="track.trackRemixers.splice(index, 1)" class="btn btn-close"></a>
