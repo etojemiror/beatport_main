@@ -22,24 +22,24 @@ function checkPassword() {
 $('body').attr('data-bs-theme', 'dark')
 
 function showWarning() {
-  alert('Тебе точно ебало набьют')
+  alert('Видимо не понял....')
 }
 </script>
 
 <template>
-  <confirm-modal v-if="showModal" title="Пошёл нахуй, понял?" msg="Пизды получишь если ещё раз сюда зайдешь"
+  <confirm-modal v-if="showModal" title="Слышь, тебе сюда нельзя, понял?" msg="=("
                  @confirm="showModal = false" @dismiss="showWarning"/>
   <form @submit.prevent>
     <main class="d-flex" style="height: 100vh; width: 100vw">
       <div class="card m-auto">
         <div class="card-body">
           <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password">Пароль</label>
             <input type="password" class="form-control" v-model="password_input" id="password"/>
           </div>
         </div>
         <div class="card-footer py-3">
-          <button @click="checkPassword" type="submit" class="btn w-100 btn-primary">Войти глубже...</button>
+          <button @click="checkPassword" type="submit" class="btn w-100 btn-primary">Зайти</button>
         </div>
       </div>
     </main>

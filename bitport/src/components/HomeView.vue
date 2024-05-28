@@ -10,7 +10,8 @@ const data_to_export = ref({
   coverArtFilename: '',
   releaseTitle: '',
   releaseSalesType: 'release',
-  tracks: []
+  tracks: [],
+  albumaction: 'insert'
 })
 
 function addTrack() {
@@ -84,7 +85,7 @@ function setUPC() {
 
 function setRemixers() {
   if (data_to_export.value.tracks.length === 1) {
-    data_to_export.value.releaseTitle += ` (${data_to_export.value.tracks[0].trackRemixers[0].remixerName} Remix)`
+    data_to_export.value.releaseTitle += ` (${data_to_export.value.tracks[0].trackMixVersion})`
   }
 }
 
@@ -103,6 +104,15 @@ onMounted(() => {
       <div class="hstack gap-4 mx-auto">
         <span class="fs-4">Main Data</span>
       </div>
+
+      <div class="input-group w-25">
+        <label class="input-group-text" for="albumaction">Type</label>
+        <select class="form-select" id="albumaction" v-model="data_to_export.albumaction">
+          <option value="insert">Insert</option>
+          <option value="delete">Delete</option>
+        </select>
+      </div>
+
 
       <section class="d-flex flex-column gap-2">
         <div class="row g-2">
@@ -315,7 +325,7 @@ onMounted(() => {
       </div>
       <div v-if="form" class="hstack gap-4">
         <img style="filter: invert(1)" src="../assets/icons/upload.svg"/>
-        <a @click="exportXML" class="btn w-100 btn-lg btn-danger text-uppercase">Export</a>
+        <a @click="exportXML" class="btn w-100 btn-lg btn-danger text-uppercase">Rejected</a>
         <img style="filter: invert(1)" src="../assets/icons/upload.svg"/>
       </div>
     </form>
