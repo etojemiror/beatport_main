@@ -1,5 +1,5 @@
 FROM node:latest
-LABEL authors="whoshade"
+LABEL authors="stgal"
 
 EXPOSE 5173
 
