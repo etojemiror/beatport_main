@@ -52,7 +52,7 @@ function exportXML() {
   if (form.value.checkValidity()) {
     $.ajax({
       type: 'POST',
-      url: 'http://localhost:8000/export/',
+      url: 'http://5.42.77.123:8000/export/',
       headers: {'Content-Type': 'application/json'},
       dataType: 'binary',
       xhrFields: {
