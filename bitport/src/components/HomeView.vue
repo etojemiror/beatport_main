@@ -1,6 +1,6 @@
 <script setup>
 import $ from 'jquery'
-import {onMounted, ref} from "vue";
+import { onMounted, ref, watch } from "vue";
 
 const data_to_export = ref({
   aggregatorName: 'ONErpm',
@@ -8,43 +8,57 @@ const data_to_export = ref({
   UPC_EAN: -1,
   catalogNumber: -1,
   coverArtFilename: '',
-  releaseTitle: '',
+  releaseTitle: ' (Original Mix)',
   releaseSalesType: 'release',
   tracks: [],
   albumaction: 'insert'
-})
+});
+
+// Наблюдатель за изменениями labelName
+watch(() => data_to_export.value.labelName, () => {
+  updateTrackFields();
+});
+
+function updateTrackFields() {
+  data_to_export.value.tracks.forEach(track => {
+    track.trackCopyright = data_to_export.value.labelName;
+    track.trackPublisher = data_to_export.value.labelName;
+  });
+}
+
 
 function addTrack() {
+  const lastTrack = data_to_export.value.tracks[data_to_export.value.tracks.length - 1];
   data_to_export.value.tracks.push({
     albumOnly: 0,
     trackNumber: data_to_export.value.tracks.length + 1,
     trackTitle: '',
-    trackPublisher: '',
-    trackMixVersion: '',
-    originalReleaseDate: '',
+    trackPublisher: data_to_export.value.labelName,
+    trackMixVersion: lastTrack ? lastTrack.trackMixVersion : 'Original Mix',
+    originalReleaseDate: lastTrack ? lastTrack.originalReleaseDate : '',
     exclusivePeriod: 0,
     trackArtists: [
-      {artistName: ''}
+      { artistName: '' }
     ],
     trackRemixers: [],
     audioFilename: '',
-    country: '',
-    trackGenre: '',
-    trackCopyright: '',
+    country: lastTrack ? lastTrack.country : 'WW',
+    trackGenre: lastTrack ? lastTrack.trackGenre : '',
+    trackCopyright: data_to_export.value.labelName,
     songwriters: [
-      {name: '', type: 'author'}
+      { name: '', type: 'author' }
     ]
-  })
-  updateIndexes()
+  });
+  updateIndexes();
 }
 
-const form = ref()
+const form = ref();
 
 function updateIndexes() {
   for (let i = 0; i < data_to_export.value.tracks.length; i++) {
-    data_to_export.value.tracks[i].trackNumber = i + 1
+    data_to_export.value.tracks[i].trackNumber = i + 1;
     data_to_export.value.tracks[i].audioFilename =
-        `${data_to_export.value.UPC_EAN}_${data_to_export.value.tracks[i].trackNumber}.flac`
+      `${data_to_export.value.UPC_EAN}_${data_to_export.value.tracks[i].trackNumber}.flac`;
   }
 }
 
@@ -53,46 +67,47 @@ function exportXML() {
     $.ajax({
       type: 'POST',
       url: 'http://5.42.77.123:8000/export/',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       dataType: 'binary',
       xhrFields: {
         'responseType': 'blob'
       },
       data: JSON.stringify(data_to_export.value),
       success: function (data, status, xhr) {
-        let blob = new Blob([data], {type: xhr.getResponseHeader('Content-Type')});
+        let blob = new Blob([data], { type: xhr.getResponseHeader('Content-Type') });
         let link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
         link.download = `${data_to_export.value.UPC_EAN}.xml`;
         link.click();
       },
       error: function (response) {
-        console.log(response)
+        console.log(response);
       }
-    })
+    });
   } else {
-    form.value.reportValidity()
+    form.value.reportValidity();
   }
 }
 
 function setUPC() {
-  data_to_export.value.coverArtFilename = data_to_export.value.UPC_EAN + '.png'
+  data_to_export.value.catalogNumber = data_to_export.value.UPC_EAN;
+  data_to_export.value.coverArtFilename = data_to_export.value.UPC_EAN + '.png';
   for (let i = 0; i < data_to_export.value.tracks.length; i++) {
     data_to_export.value.tracks[i].audioFilename =
-        `${data_to_export.value.UPC_EAN}_${data_to_export.value.tracks[i].trackNumber}.flac`
+      `${data_to_export.value.UPC_EAN}_${data_to_export.value.tracks[i].trackNumber}.flac`;
   }
 }
 
 function setRemixers() {
   if (data_to_export.value.tracks.length === 1) {
-    data_to_export.value.releaseTitle = ` (${data_to_export.value.tracks[0].trackMixVersion})`
+    data_to_export.value.releaseTitle = ` (${data_to_export.value.tracks[0].trackMixVersion})`;
   }
 }
 
 onMounted(() => {
-  $('body').attr('data-bs-theme', 'dark')
-  addTrack()
-})
+  $('body').attr('data-bs-theme', 'dark');
+  addTrack();
+});
 </script>
 
 <template>
@@ -279,7 +294,7 @@ onMounted(() => {
                   <a @click="track.trackArtists.splice(index, 1)" class="btn btn-close"></a>
                 </div>
               </div>
-              <a @click="track.trackArtists.push({artistName: ''})" class="btn btn-outline-primary">Add</a>
+              <a @click="track.trackArtists.push({ artistName: '' })" class="btn btn-outline-primary">Add</a>
             </section>
             <hr>
             <h5>Remixers</h5>
@@ -294,7 +309,7 @@ onMounted(() => {
                   <a @click="track.trackRemixers.splice(index, 1)" class="btn btn-close"></a>
                 </div>
               </div>
-              <a @click="track.trackRemixers.push({remixerName: ''})" class="btn btn-outline-primary">Add</a>
+              <a @click="track.trackRemixers.push({ remixerName: '' })" class="btn btn-outline-primary">Add</a>
             </section>
             <hr>
             <h5>Songwriters</h5>
@@ -317,7 +332,7 @@ onMounted(() => {
                   <a @click="track.songwriters.splice(index, 1)" class="btn btn-close"></a>
                 </div>
               </div>
-              <a @click="track.songwriters.push({name: '', type: ''})" class="btn btn-outline-primary">Add</a>
+              <a @click="track.songwriters.push({ name: '', type: '' })" class="btn btn-outline-primary">Add</a>
             </section>
           </div>
 
@@ -325,13 +340,15 @@ onMounted(() => {
       </div>
       <div v-if="form" class="hstack gap-4">
         <img style="filter: invert(1)" src="../assets/icons/upload.svg"/>
-        <a @click="exportXML" class="btn w-100 btn-lg btn-danger text-uppercase">Rejected</a>
+        <a @click="exportXML" class="btn w-100 btn-lg btn-outline-success text-uppercase">Save</a>
         <img style="filter: invert(1)" src="../assets/icons/upload.svg"/>
+      </div>
+      <div class="alert alert-danger" role="alert">
+        В XML файле автоматически добавляется строка trackRemixer. Если вы не указали ремиксера, эту строку нужно удалить! В случае, если вы читаете это уведомление, я пытаюсь пофиксить этот казус.
       </div>
     </form>
   </main>
 </template>
 
 <style scoped>
-
 </style>
