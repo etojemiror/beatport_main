@@ -41,6 +41,11 @@ function showWarning() {
           <button @click="checkPassword" type="submit" class="btn w-100 btn-primary">Зайти</button>
         </div>
       </div>
+
+      <div class="fixed-bottom">
+        <p>last update: 18.06.2024</p>
+      </div>
+
     </main>
   </form>
 </template>

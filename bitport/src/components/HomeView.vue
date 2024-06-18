@@ -22,7 +22,6 @@ watch(() => data_to_export.value.labelName, () => {
 function updateTrackFields() {
   data_to_export.value.tracks.forEach(track => {
     track.trackCopyright = data_to_export.value.labelName;
-    track.trackPublisher = data_to_export.value.labelName;
   });
 }
 
@@ -33,7 +32,7 @@ function addTrack() {
     albumOnly: 0,
     trackNumber: data_to_export.value.tracks.length + 1,
     trackTitle: '',
-    trackPublisher: data_to_export.value.labelName,
+    trackPublisher: 'ONErpm',
     trackMixVersion: lastTrack ? lastTrack.trackMixVersion : 'Original Mix',
     originalReleaseDate: lastTrack ? lastTrack.originalReleaseDate : '',
     exclusivePeriod: 0,
@@ -342,9 +341,6 @@ onMounted(() => {
         <img style="filter: invert(1)" src="../assets/icons/upload.svg"/>
         <a @click="exportXML" class="btn w-100 btn-lg btn-outline-success text-uppercase">Save</a>
         <img style="filter: invert(1)" src="../assets/icons/upload.svg"/>
-      </div>
-      <div class="alert alert-danger" role="alert">
-        В XML файле автоматически добавляется строка trackRemixer. Если вы не указали ремиксера, эту строку нужно удалить! В случае, если вы читаете это уведомление, я пытаюсь пофиксить этот казус.
       </div>
     </form>
   </main>
