@@ -28,7 +28,9 @@ function updateTrackFields() {
 
 function addTrack() {
   const lastTrack = data_to_export.value.tracks[data_to_export.value.tracks.length - 1];
-  data_to_export.value.tracks.push({
+
+  // Создаем новый трек с базовой структурой
+  const newTrack = {
     albumOnly: 0,
     trackNumber: data_to_export.value.tracks.length + 1,
     trackTitle: '',
@@ -47,9 +49,21 @@ function addTrack() {
     songwriters: [
       { name: '', type: 'author' }
     ]
-  });
+  };
+
+  if (lastTrack) {
+    // дубль trackArtists из последнего трека
+    newTrack.trackArtists = lastTrack.trackArtists.map(artist => ({ artistName: artist.artistName }));
+
+    // дубль songwriters из последнего трека
+    newTrack.songwriters = lastTrack.songwriters.map(writer => ({ name: writer.name, type: writer.type }));
+  }
+
+  // добавляем новый трек в список
+  data_to_export.value.tracks.push(newTrack);
   updateIndexes();
 }
+
 
 const form = ref();
 
