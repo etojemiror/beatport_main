@@ -1,32 +1,31 @@
 <script setup>
-import {ref} from "vue";
-import {useRouter} from "vue-router";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import ConfirmModal from "@/components/confirmModal.vue";
 import $ from "jquery";
 
-const router = useRouter()
-const password = ref('123456789')
-const password_input = ref('')
+const router = useRouter();
+const password = ref('123456789'); // Правильный пароль
+const password_input = ref(''); // Введенный пользователем пароль
+const showModal = ref(false); // Для отображения модального окна
 
-const showModal = ref(false)
-
-function checkPassword() {
+function checkPassword(routeName) {
   if (password_input.value === password.value) {
-    router.replace({name: 'home'}) // push me
+    router.replace({ name: routeName }); // Переход на нужную страницу
   } else {
-    showModal.value = true
+    showModal.value = true; // Показываем модальное окно при неправильном пароле
   }
 }
 
-$('body').attr('data-bs-theme', 'dark')
+$('body').attr('data-bs-theme', 'dark');
 
 function showWarning() {
-  alert('Видимо не понял....')
+  alert('Кыш'); // Дополнительное предупреждение
 }
 </script>
 
 <template>
-  <confirm-modal v-if="showModal" title="Слышь, тебе сюда нельзя, понял?" msg="=("
+  <confirm-modal v-if="showModal" title="Тебе сюда нельзя. Пароль не подошёл" msg="=("
                  @confirm="showModal = false" @dismiss="showWarning"/>
   <form @submit.prevent>
     <main class="d-flex" style="height: 100vh; width: 100vw">
@@ -38,18 +37,19 @@ function showWarning() {
           </div>
         </div>
         <div class="card-footer py-3">
-          <button @click="checkPassword" type="submit" class="btn w-100 btn-primary">Зайти</button>
+          <div class="d-flex gap-2">
+            <button @click="checkPassword('home')" type="submit" class="btn flex-grow-1 btn-outline-primary">XML Tool</button>
+            <button @click="checkPassword('search')" type="button" class="btn flex-grow-1 btn-outline-primary">ISRC Search</button>
+          </div>
         </div>
       </div>
-
       <div class="fixed-bottom">
-        <p>last update: 18.06.2024</p>
-      </div>
-
+        <p>last update: 13.08.2024</p>
+        </div>
     </main>
   </form>
 </template>
 
 <style scoped>
-
+/* Добавь стили при необходимости */
 </style>
